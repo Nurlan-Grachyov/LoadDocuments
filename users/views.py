@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenViewBase
 
 class RegisterCreateAPIView(generics.CreateAPIView):
     """
-    Класс регистрации пользователя
+    The registration view
     """
 
     serializer_class = RegisterSerializer
@@ -17,7 +17,7 @@ class RegisterCreateAPIView(generics.CreateAPIView):
 
 class MyTokenObtainPairView(TokenObtainPairView, TokenViewBase):
     """
-    Переопределение класса TokenObtainPairView с предоставлением доступа всем
+    Overriding the TokenObtainPairView class to allow access to everyone
     """
 
     permission_classes = [AllowAny]

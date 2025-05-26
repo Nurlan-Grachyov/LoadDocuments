@@ -3,7 +3,7 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     """
-    Модель пользователя
+    The model for a user
     """
 
     username = models.CharField(null=True, blank=True, verbose_name="username")

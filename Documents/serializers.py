@@ -5,7 +5,7 @@ from Documents.models import Document
 
 class DocumentsSerializer(serializers.ModelSerializer):
     """
-    Сериализатор подписки
+    Serializer for a document
     """
 
     class Meta:
