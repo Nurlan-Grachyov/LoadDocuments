@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from Documents.models import Document
-from Documents.permissions import Moderators
+from Documents.permissions import Moderators, IsSuperUser
 from Documents.serializers import DocumentsSerializer
 
 
@@ -13,7 +13,6 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
 
     serializer_class = DocumentsSerializer
     queryset = Document.objects.all()
-    permission_classes = [Moderators]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -24,6 +23,7 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         """
 
         if self.request.method in ("GET", "POST"):
+            print("4")
             permission_classes = [Moderators]
         else:
             permission_classes = [IsAuthenticated]
@@ -33,27 +33,30 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         """
         The return method of product list by criteria
         """
-
+        print("5")
         if (
             self.request.user.groups.filter(name="Moderators").exists()
             or self.request.user.is_superuser
         ):
             return Document.objects.all()
+        print("6")
         return Document.objects.filter(owner=self.request.user)
 
 
-class DocumentRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DocumentsSerializer
     queryset = Document.objects.all()
-    permission_classes = [Moderators]
 
     def get_permissions(self):
         """
         Method of granting access rights.
         """
 
-        if self.request.method in ("PUT", "PATCH"):
+        if self.request.method in ("PUT", "PATCH",):
+            print("1")
             permission_classes = [Moderators]
+        elif self.request.method == "DELETE":
+            permission_classes = [IsSuperUser]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
