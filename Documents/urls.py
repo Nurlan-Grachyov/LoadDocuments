@@ -1,7 +1,10 @@
 from django.urls import path
 
 from Documents.apps import DocumentsConfig
-from Documents.views import DocumentListCreateApiView, DocumentRetrieveUpdateDestroyAPIView
+from Documents.views import (
+    DocumentListCreateApiView,
+    DocumentRetrieveUpdateDestroyAPIView,
+)
 
 app_name = DocumentsConfig.name
 
@@ -15,5 +18,5 @@ urlpatterns = [
         "retrieve_update_documents/<int:pk>/",
         DocumentRetrieveUpdateDestroyAPIView.as_view(),
         name="retrieve_update_documents",
-    )
+    ),
 ]

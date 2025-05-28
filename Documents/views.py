@@ -9,6 +9,7 @@ from users.models import CustomUser
 
 from .tasks import send_email_about_update_document
 
+
 class DocumentListCreateApiView(generics.ListCreateAPIView):
     """
     The view for creating and viewing a list of documents
@@ -18,35 +19,35 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
     queryset = Document.objects.all()
 
     def perform_create(self, serializer):
-        """ Метод для сохранения документа и отправки уведомления о его создании. """
+        """
+        Method for saving a document and sending a notification when it is created
+        """
+
         document = serializer.save(owner=self.request.user)
-        print(self.request.user)
         send_email_about_update_document.delay(None, document.owner.email)
         return Response({"message": "Документ успешно создан"}, status=201)
 
     def get_permissions(self):
         """
-        Метод предоставления прав доступа.
+        Method of providing access rights
         """
 
         if self.request.method in ("GET", "POST"):
-            print("4")
             permission_classes = [Moderators]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
-    
+
     def get_queryset(self):
         """
         The return method of product list by criteria
         """
-        print("5")
+
         if (
             self.request.user.groups.filter(name="Moderators").exists()
             or self.request.user.is_superuser
         ):
             return Document.objects.all()
-        print("6")
         return Document.objects.filter(owner=self.request.user)
 
 
@@ -55,11 +56,13 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     queryset = Document.objects.all()
 
     def partial_update(self, request, *args, **kwargs):
+        """
+        Method for updating a document and sending update notifications
+
+        """
         document_id = kwargs.get("pk")
-        print(document_id)
         try:
             document = Document.objects.get(id=document_id)
-            print(document)
         except Document.DoesNotExist:
             return Response(
                 {"message": "Такого документа не существует"},
@@ -68,9 +71,7 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
         serializer = DocumentsSerializer(document, data=request.data, partial=True)
         if serializer.is_valid():
-            print("ser.is_valid")
             serializer.save()
-            print("ser2")
             send_email_about_update_document.delay(document_id, None)
             return Response({"message": "Документ успешно обновлен"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -80,8 +81,10 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         Method of granting access rights.
         """
 
-        if self.request.method in ("PUT", "PATCH",):
-            print("1")
+        if self.request.method in (
+            "PUT",
+            "PATCH",
+        ):
             permission_classes = [Moderators]
         elif self.request.method == "DELETE":
             permission_classes = [IsSuperUser]

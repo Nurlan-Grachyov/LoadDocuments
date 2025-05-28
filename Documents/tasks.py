@@ -5,10 +5,13 @@ from Documents.models import Document
 from config.settings import EMAIL_HOST_USER
 from users.models import CustomUser
 
+
 @shared_task
 def send_email_about_update_document(document_id=None, user_email=None):
-    """Отправляет уведомление о документе."""
-    print("good")
+    """
+    Sending a notification
+    """
+
     admin = CustomUser.objects.get(email="nurlan.grachyov@mail.ru")
 
     if document_id:

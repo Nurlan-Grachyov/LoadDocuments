@@ -16,22 +16,21 @@ class Document(models.Model):
     STATUS_CHOICES = [
         (PENDING, "Ожидает одобрения"),
         (APPROVED, "Подтвержден"),
-        (REJECTED, "Отклонён")
+        (REJECTED, "Отклонён"),
     ]
 
     title = models.CharField(max_length=255)
     file = models.FileField(upload_to="uploads/")
     status = models.CharField(
-        max_length=17,
-        choices=STATUS_CHOICES,
-        default=PENDING,
-        blank=True
+        max_length=17, choices=STATUS_CHOICES, default=PENDING, blank=True
     )
-    owner = ForeignKey(AUTH_USER_MODEL,
-                       on_delete=models.CASCADE,
-                       related_name="Documents",
-                       null=True,
-                       blank=True, )
+    owner = ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="Documents",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.title
