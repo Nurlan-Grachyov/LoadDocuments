@@ -24,8 +24,6 @@ class Moderators(BasePermission):
                     request.user.groups.filter(name="Moderators").exists()
                     or request.user.is_superuser
             )
-        elif request.method == "DELETE":
-            return request.user.is_superuser
         return False
 
 

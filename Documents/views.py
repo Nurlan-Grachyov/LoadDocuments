@@ -1,10 +1,13 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from Documents.models import Document
 from Documents.permissions import Moderators, IsSuperUser
 from Documents.serializers import DocumentsSerializer
+from users.models import CustomUser
 
+from .tasks import send_email_about_update_document
 
 class DocumentListCreateApiView(generics.ListCreateAPIView):
     """
@@ -15,7 +18,11 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
     queryset = Document.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        """ Метод для сохранения документа и отправки уведомления о его создании. """
+        document = serializer.save(owner=self.request.user)
+        print(self.request.user)
+        send_email_about_update_document.delay(None, document.owner.email)
+        return Response({"message": "Документ успешно создан"}, status=201)
 
     def get_permissions(self):
         """
@@ -46,6 +53,27 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
 class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DocumentsSerializer
     queryset = Document.objects.all()
+
+    def partial_update(self, request, *args, **kwargs):
+        document_id = kwargs.get("pk")
+        print(document_id)
+        try:
+            document = Document.objects.get(id=document_id)
+            print(document)
+        except Document.DoesNotExist:
+            return Response(
+                {"message": "Такого документа не существует"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = DocumentsSerializer(document, data=request.data, partial=True)
+        if serializer.is_valid():
+            print("ser.is_valid")
+            serializer.save()
+            print("ser2")
+            send_email_about_update_document.delay(document_id, None)
+            return Response({"message": "Документ успешно обновлен"})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_permissions(self):
         """
