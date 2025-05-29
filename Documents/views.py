@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from Documents.models import Document
-from Documents.permissions import Moderators, IsSuperUser
+from Documents.permissions import IsSuperUser, Moderators
 from Documents.serializers import DocumentsSerializer
 from users.models import CustomUser
 

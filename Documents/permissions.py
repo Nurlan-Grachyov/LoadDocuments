@@ -37,6 +37,7 @@ class IsSuperUser(BasePermission):
     Check for access rights.
     If the method is DELETE, returns True if the user is superuser.
     """
+
     def has_object_permission(self, request, view, obj):
         if request.method == "DELETE":
             return request.user.is_superuser
