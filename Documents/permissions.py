@@ -12,7 +12,7 @@ class Moderators(BasePermission):
         if request.method == "POST":
             return (
                 request.user.is_superuser
-                or (request.user.is_authenticated
+                or (request.user.is_authenticated()
                 and not request.user.groups.filter(name="Moderators").exists())
             )
         return True
@@ -22,14 +22,14 @@ class Moderators(BasePermission):
         if request.method in ("GET",):
             return (
                 request.user.groups.filter(name="Moderators").exists()
-                or request.user.is_superuser
+                or request.user.is_superuser()
                 or request.user == obj.owner
             )
         elif request.method in ("PUT", "PATCH"):
             print("permission3")
             return (
                 request.user.groups.filter(name="Moderators").exists()
-                or request.user.is_superuser
+                or request.user.is_superuser()
             )
         return False
 
@@ -42,5 +42,5 @@ class IsSuperUser(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method == "DELETE":
-            return request.user.is_superuser
+            return request.user.is_superuser()
         return False
