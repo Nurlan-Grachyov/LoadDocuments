@@ -12,12 +12,13 @@ class Moderators(BasePermission):
         if request.method == "POST":
             return (
                 request.user.is_superuser
-                or request.user.is_authenticated
-                and not request.user.groups.filter(name="Moderators").exists()
+                or (request.user.is_authenticated
+                and not request.user.groups.filter(name="Moderators").exists())
             )
         return True
 
     def has_object_permission(self, request, view, obj):
+        print("permission2")
         if request.method in ("GET",):
             return (
                 request.user.groups.filter(name="Moderators").exists()
@@ -25,6 +26,7 @@ class Moderators(BasePermission):
                 or request.user == obj.owner
             )
         elif request.method in ("PUT", "PATCH"):
+            print("permission3")
             return (
                 request.user.groups.filter(name="Moderators").exists()
                 or request.user.is_superuser

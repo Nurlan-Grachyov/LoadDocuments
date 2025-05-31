@@ -1,11 +1,9 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from Documents.models import Document
 from Documents.permissions import IsSuperUser, Moderators
 from Documents.serializers import DocumentsSerializer
-from users.models import CustomUser
 
 from .tasks import send_email_about_update_document
 
@@ -83,6 +81,7 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         """
 
         if self.request.method in ("PUT", "PATCH",):
+            print("permission")
             permission_classes = [Moderators]
         else:
             permission_classes = [IsSuperUser]
