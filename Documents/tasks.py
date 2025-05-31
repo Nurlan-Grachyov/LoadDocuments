@@ -32,7 +32,6 @@ def send_email_about_update_document(document_id=None, user_email=None):
                 users,
             )
     elif user_email:
-        print(user_email)
         users = [admin.email, user_email]
         send_mail(
             "Новый документ создан",
