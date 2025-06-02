@@ -41,7 +41,10 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         The return method of product list by criteria
         """
 
-        if self.request.user.groups.filter(name="Moderators").exists() or self.request.user.is_superuser:
+        if (
+                self.request.user.groups.filter(name="Moderators").exists()
+                or self.request.user.is_superuser
+        ):
             return Document.objects.all()
         return Document.objects.filter(owner=self.request.user)
 
@@ -54,34 +57,12 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     serializer_class = DocumentsSerializer
     queryset = Document.objects.all()
 
-    def partial_update(self, request, *args, **kwargs):
-        """
-        Method for updating a document and sending update notifications
-        """
-
-        document_id = kwargs.get("pk")
-        try:
-            document = Document.objects.get(id=document_id)
-        except Document.DoesNotExist:
-            return Response(
-                {"message": "Такого документа не существует"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = DocumentsSerializer(document, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            send_email_about_update_document.delay(document_id, None)
-            return Response({"message": "Документ успешно обновлен"})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def get_permissions(self):
         """
         Method of granting access rights.
         """
 
-        if self.request.method in ("PUT", "PATCH",):
-            print("permission")
+        if self.request.method in ("PUT", "PATCH", "GET"):
             permission_classes = [Moderators]
         else:
             permission_classes = [IsSuperUser]

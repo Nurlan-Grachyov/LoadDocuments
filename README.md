@@ -4,7 +4,7 @@
 }
 
 {
-    "email": "moderator@mail.ru",
+    "email": "nurlan.grachyov@mail.ru",
     "password": 12345678
 }
 
