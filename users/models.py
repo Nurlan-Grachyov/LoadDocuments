@@ -41,7 +41,6 @@ class CustomUser(AbstractUser):
         return self.email
 
 
-
 class Payments(models.Model):
     """
     Модель платежей
@@ -75,7 +74,6 @@ class Payments(models.Model):
     session_id = models.CharField(
         verbose_name="идентификатор оплаты", null=True, blank=True
     )
-
 
     class Meta:
         verbose_name = "Оплата"

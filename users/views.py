@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenViewBase
 
 from Documents.models import Document
 from Documents.permissions import Moderators
-from users.serializers import RegisterSerializer, PaymentsSerializer
+from users.serializers import PaymentsSerializer, RegisterSerializer
 from users.services import create_price, create_session
 
 

@@ -42,8 +42,8 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         """
 
         if (
-                self.request.user.groups.filter(name="Moderators").exists()
-                or self.request.user.is_superuser
+            self.request.user.groups.filter(name="Moderators").exists()
+            or self.request.user.is_superuser
         ):
             return Document.objects.all()
         return Document.objects.filter(owner=self.request.user)

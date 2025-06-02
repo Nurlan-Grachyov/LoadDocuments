@@ -1,7 +1,6 @@
 import stripe
 from django.http import JsonResponse
 
-
 from config.settings import API_KEY
 
 stripe.api_key = API_KEY
