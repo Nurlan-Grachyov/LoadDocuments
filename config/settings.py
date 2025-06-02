@@ -30,6 +30,8 @@ SECRET_KEY = "django-insecure-m=kv!02x0ya@qco)l!%$0s@!jl##6v14s8^_05^6=4c(4u@(ok
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
+API_KEY = os.getenv("API_KEY")
+
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -40,10 +42,13 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+
     "django.contrib.staticfiles",
     "Documents",
     "users",
+
     "rest_framework",
+    "django_filters",
     "rest_framework_simplejwt",
     "drf_yasg",
 ]

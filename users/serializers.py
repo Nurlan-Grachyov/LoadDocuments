@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import CustomUser
+from users.models import CustomUser, Payments
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -24,3 +24,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.is_active = True
         user.save()
         return user
+
+
+class PaymentsSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор платежей
+    """
+
+    class Meta:
+        model = Payments
+        fields = "__all__"
