@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from Documents.models import Document
-from Documents.permissions import IsSuperUser, IsModerators
+from Documents.permissions import IsModerators, IsSuperUser
 from Documents.serializers import DocumentsSerializer
 
 from .tasks import send_email_about_update_document

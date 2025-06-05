@@ -35,4 +35,3 @@ class IsSuperUser(BasePermission):
         if request.method == "DELETE":
             return request.user.is_superuser or request.user == obj.owner
         return False
-

@@ -37,7 +37,10 @@ class PaymentsViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentsSerializer
     queryset = Payments.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ("user", "paid_document",)
+    filterset_fields = (
+        "user",
+        "paid_document",
+    )
     ordering_fields = ("-pay_date",)
 
     def perform_create(self, serializer):

@@ -1,15 +1,16 @@
-from django.utils.translation import gettext_lazy as _
+from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
-from django.contrib import admin, messages
+from django.utils.translation import gettext_lazy as _
+
 from .models import Document
 
 
 def approve_documents(modeladmin: ModelAdmin, request: HttpRequest, queryset: QuerySet):
     """
-     Mass approval of documents
-     """
+    Mass approval of documents
+    """
 
     queryset.update(status=Document.APPROVED)
     messages.success(request, f"{queryset.count()} документов успешно одобрено.")
@@ -51,7 +52,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
         if not request.user.groups.filter(name="Moderators").exists():
             try:
-                fields.remove('status')
+                fields.remove("status")
             except ValueError:
                 pass
 
