@@ -7,7 +7,10 @@ stripe.api_key = API_KEY
 
 
 def create_price(amount):
-    """Создание цены для объекта"""
+    """
+    Create a price for an object
+    """
+
     price = stripe.Price.create(
         currency="usd",
         unit_amount=amount * 100,
@@ -17,7 +20,10 @@ def create_price(amount):
 
 
 def create_session(price):
-    """Создание сессии оплаты"""
+    """
+    Create payment session
+    """
+
     session = stripe.checkout.Session.create(
         success_url="http://127.0.0.1:8000/",
         line_items=[{"price": price.get("id"), "quantity": 1}],
@@ -27,6 +33,9 @@ def create_session(price):
 
 
 def test_session(request, session_id):
-    """Просмотр сессии оплаты через идентификатор сессии"""
+    """
+    The viewing a payment session with session ID
+    """
+
     session = stripe.checkout.Session.retrieve(session_id)
     return JsonResponse({"session": session})

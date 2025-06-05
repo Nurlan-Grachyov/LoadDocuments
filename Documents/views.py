@@ -1,8 +1,8 @@
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.response import Response
 
 from Documents.models import Document
-from Documents.permissions import IsSuperUser, Moderators
+from Documents.permissions import IsSuperUser, IsModerators
 from Documents.serializers import DocumentsSerializer
 
 from .tasks import send_email_about_update_document
@@ -31,7 +31,7 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         """
 
         if self.request.method in ("GET", "POST"):
-            permission_classes = [Moderators]
+            permission_classes = [IsModerators]
         else:
             return False
         return [permission() for permission in permission_classes]
@@ -63,7 +63,7 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         """
 
         if self.request.method in ("PUT", "PATCH", "GET"):
-            permission_classes = [Moderators]
+            permission_classes = [IsModerators]
         else:
             permission_classes = [IsSuperUser]
         return [permission() for permission in permission_classes]

@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 
-class Moderators(BasePermission):
+class IsModerators(BasePermission):
     """
     Check for access rights.
     If the method is GET, PUT or PATCH, returns True if the user is superuser or belongs to the Moderators group.
@@ -33,5 +33,6 @@ class IsSuperUser(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method == "DELETE":
-            return request.user.is_superuser
+            return request.user.is_superuser or request.user == obj.owner
         return False
+

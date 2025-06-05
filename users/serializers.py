@@ -14,7 +14,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Метод создания аккаунта
+        The account creation method
         """
 
         user = CustomUser(
@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class PaymentsSerializer(serializers.ModelSerializer):
     """
-    Сериализатор платежей
+    The payments serializer
     """
 
     class Meta:

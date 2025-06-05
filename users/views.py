@@ -1,11 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, viewsets
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenViewBase
 
 from Documents.models import Document
-from Documents.permissions import Moderators
+from Documents.permissions import IsModerators
+from users.models import Payments
 from users.serializers import PaymentsSerializer, RegisterSerializer
 from users.services import create_price, create_session
 
@@ -30,14 +31,14 @@ class MyTokenObtainPairView(TokenObtainPairView, TokenViewBase):
 
 class PaymentsViewSet(viewsets.ModelViewSet):
     """
-    Контроллер платежей с фильтрацией и сортировкой
+    The payment view with filtering and sorting
     """
 
     serializer_class = PaymentsSerializer
-    queryset = Document.objects.all()
+    queryset = Payments.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ("paid_course", "paid_lesson", "payment_method")
-    ordering_fields = ("pay_date",)
+    filterset_fields = ("user", "paid_document",)
+    ordering_fields = ("-pay_date",)
 
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
@@ -48,10 +49,8 @@ class PaymentsViewSet(viewsets.ModelViewSet):
         payment.link = payment_link
         payment.session_id = session_id
         document = Document.objects.get(id=payment.paid_document.id)
-        print(document)
         document.is_paid = True
         document.save()
-        print(document.is_paid)
         payment.save()
 
     def get_permissions(self):
@@ -60,7 +59,7 @@ class PaymentsViewSet(viewsets.ModelViewSet):
         """
 
         if self.request.method in ("GET", "POST"):
-            permission_classes = [Moderators]
+            permission_classes = [IsModerators]
         else:
             return False
         return [permission() for permission in permission_classes]
