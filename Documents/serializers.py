@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from Documents.models import Document
+from Documents.models import Document, Comments
 
 
 class DocumentsSerializer(serializers.ModelSerializer):
@@ -10,4 +10,14 @@ class DocumentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
+        fields = "__all__"
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for a comment
+    """
+
+    class Meta:
+        model = Comments
         fields = "__all__"

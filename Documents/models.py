@@ -35,3 +35,13 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Comments(models.Model):
+    owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    comment = models.CharField(verbose_name="comment", max_length=500)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='comments')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment

@@ -7,12 +7,30 @@ from users.models import CustomUser
 
 
 @shared_task
-def send_email_about_update_document(document_id=None, user_email=None):
+def send_email_about_create_document(user_email=None):
     """
     Sending a notification
     """
 
     admin = CustomUser.objects.get(email="nurlan.grachyov@mail.ru")
+
+    if user_email:
+        users = [admin.email, user_email]
+        send_mail(
+            "Новый документ создан",
+            "Создан новый документ.",
+            EMAIL_HOST_USER,
+            users,
+        )
+    else:
+        raise ValueError("Требуется аргумент user_email.")
+
+
+@shared_task
+def send_email_about_update_document(document_id=None):
+    """
+    Sending a notification
+    """
 
     if document_id:
         document = Document.objects.get(id=document_id)
@@ -31,13 +49,10 @@ def send_email_about_update_document(document_id=None, user_email=None):
                 EMAIL_HOST_USER,
                 users,
             )
-    elif user_email:
-        users = [admin.email, user_email]
-        send_mail(
-            "Новый документ создан",
-            "Создан новый документ.",
-            EMAIL_HOST_USER,
-            users,
-        )
     else:
-        raise ValueError("Требуется хотя бы один аргумент: document_id или user_email.")
+        raise ValueError("Требуется аргумент document_id.")
+
+
+@shared_task
+def send_email_about_new_comment():
+    pass
