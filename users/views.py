@@ -44,6 +44,9 @@ class PaymentsViewSet(viewsets.ModelViewSet):
     ordering_fields = ("-pay_date",)
 
     def perform_create(self, serializer):
+        """
+        The method of a creating payment
+        """
         payment = serializer.save(user=self.request.user)
 
         price = create_price(int(payment.payment_amount))
@@ -58,7 +61,7 @@ class PaymentsViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Method of providing access rights
+        The method of providing access rights
         """
 
         if self.request.method in ("GET", "POST"):

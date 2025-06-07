@@ -6,7 +6,7 @@ from Documents.models import Document, Comments
 from Documents.permissions import IsModerators, IsSuperUser
 from Documents.serializers import DocumentsSerializer, CommentsSerializer
 
-from .tasks import send_email_about_create_document, send_email_about_update_document
+from .tasks import send_email_about_create_document, send_email_about_update_document, send_email_about_new_comment
 
 
 class DocumentListCreateApiView(generics.ListCreateAPIView):
@@ -23,7 +23,7 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
         """
 
         document = serializer.save(owner=self.request.user)
-        send_email_about_create_document.delay(None, document.owner.email)
+        send_email_about_create_document.delay(document.owner.email)
         return Response({"message": "Документ успешно создан"}, status=201)
 
     def get_permissions(self):
@@ -52,7 +52,7 @@ class DocumentListCreateApiView(generics.ListCreateAPIView):
 
 class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Method for reading, updating and deleting a document
+    The class for reading, updating and deleting a document
     """
 
     serializer_class = DocumentsSerializer
@@ -78,20 +78,22 @@ class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         return [permission() for permission in permission_classes]
 
 
-# class CommentViewSet(viewsets.ModelViewSet):
-#     """
-#     Method for reading, updating and deleting a comment
-#     """
-#
-#     serializer_class = CommentsSerializer
-#     queryset = Comments.objects.all()
-#     permission_classes = [IsAuthenticated]
-#
-#     def perform_create(self, serializer):
-#         """
-#         The creating method of a comment
-#         """
-#
-#         comment = serializer.save(owner=self.request.user)
-#         send_email_about_new_comment.delay(None, comment.document.owner.email)
-#         return Response({"message": "Документ успешно создан"}, status=201)
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    The class for reading, updating and deleting a comment
+    """
+
+    serializer_class = CommentsSerializer
+    queryset = Comments.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """
+        The creating method of a comment
+        """
+
+        document_id = self.kwargs['document_pk']
+        document = Document.objects.get(id=document_id)
+        comment = serializer.save(owner=self.request.user, document=document)
+        send_email_about_new_comment.delay(comment.document.id, comment.document.owner.email)
+        return Response({"message": "Комментарий успешно создан"}, status=201)

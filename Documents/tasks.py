@@ -9,7 +9,7 @@ from users.models import CustomUser
 @shared_task
 def send_email_about_create_document(user_email=None):
     """
-    Sending a notification
+    Sending email about a creating document
     """
 
     admin = CustomUser.objects.get(email="nurlan.grachyov@mail.ru")
@@ -29,7 +29,7 @@ def send_email_about_create_document(user_email=None):
 @shared_task
 def send_email_about_update_document(document_id=None):
     """
-    Sending a notification
+    Sending about an updating document
     """
 
     if document_id:
@@ -54,5 +54,29 @@ def send_email_about_update_document(document_id=None):
 
 
 @shared_task
-def send_email_about_new_comment():
-    pass
+def send_email_about_new_comment(document_id=None, document_owner=None):
+    """
+    Sending about a creating comment
+    """
+
+    try:
+        document = Document.objects.get(id=document_id)
+    except Document.DoesNotExist as exc:
+        raise ValueError("Такой документ не найден") from exc
+
+    if not document_owner or not isinstance(document_owner, str):
+        raise ValueError("Неверный email владельца документа.")
+
+    subject = f"Новый комментарий к документу '{document.title}'"
+    message = (
+        f"Появился новый комментарий к документу:\n\nНазвание документа: {document.title}\n"
+        f"Статус документа: {document.status}"
+    )
+    recipients = [document_owner]
+
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=EMAIL_HOST_USER,
+        recipient_list=recipients,
+    )

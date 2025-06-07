@@ -29,12 +29,13 @@ class TestDocuments(APITestCase):
         self.owner.set_password("12345678")
         self.owner.save()
 
-        # Новый файл для загрузки
         self.test_file = SimpleUploadedFile("test_file.txt", b"Hello World")
         self.data_test_file = {"title": "Test Document", "file": self.test_file}
 
     def test_upload_document(self):
-        """Тестируем создание документа"""
+        """Test of a creating document"""
+
+
         request = self.factory.post(
             "/documents/list_create_documents/", data=self.data_test_file
         )
@@ -46,7 +47,8 @@ class TestDocuments(APITestCase):
         self.assertEqual(document.title, "Test Document")
 
     def test_update_document(self):
-        """Тестируем обновление документа"""
+        """Test of an updating document"""
+
         doc = Document.objects.create(title="Test Document", file=self.test_file)
         self.document = Document.objects.get(pk=doc.pk)
 
@@ -69,6 +71,8 @@ class TestDocuments(APITestCase):
         self.assertEqual(updated_document.title, new_title)
 
     def test_delete_document(self):
+        """Test of a deleting document"""
+
         doc = Document.objects.create(title="Test Document", file=self.test_file)
         self.document = Document.objects.get(pk=doc.pk)
 

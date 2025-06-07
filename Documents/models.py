@@ -38,9 +38,9 @@ class Document(models.Model):
 
 
 class Comments(models.Model):
-    owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,)
     comment = models.CharField(verbose_name="comment", max_length=500)
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='comments')
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='comments', null=True, blank=True,)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
